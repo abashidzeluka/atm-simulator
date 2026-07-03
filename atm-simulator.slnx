@@ -1,5 +1,8 @@
 <Solution>
   <Folder Name="/Project/">
+    <Project Path="Application/Application.csproj" Id="ae7afd80-3c6b-41ee-b597-3dc81ebcd6ef" />
+    <Project Path="Core/Core.csproj" Id="e0221f77-bf19-46e0-be14-480c2bb61e82" />
+    <Project Path="Repository/Repository.csproj" Id="fbbc1f43-ef21-485c-a37e-bb554387fb4f" />
     <Project Path="UI/UI.csproj" />
   </Folder>
 </Solution>
