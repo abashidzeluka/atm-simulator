@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/Project/">
+    <Project Path="UI/UI.csproj" />
+  </Folder>
+</Solution>
