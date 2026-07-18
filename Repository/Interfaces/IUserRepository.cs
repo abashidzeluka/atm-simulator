@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Application.Interfaces
+namespace Repository.Interfaces
 {
     internal interface IUserRepository
     {

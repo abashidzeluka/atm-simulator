@@ -1,10 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Domain.Entities;
 
-namespace Application.Interfaces
+namespace Repository.Interfaces
 {
-    internal interface IAccountRepository
-    {
+    public interface IAccountRepository
+    {    
+            Account GetByUsername(string username);  
+            void Add(Account account);               
+            bool Exists(string username);            
+            void Update(Account account);
     }
 }

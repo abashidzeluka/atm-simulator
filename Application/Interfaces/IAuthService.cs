@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Domain.Entities;
 
-namespace Application.InterfaceServices
+namespace Application.Interfaces
 {
-    internal interface IAuthService
+    public interface IAuthService
     {
+        Account Register(string username, string password);
+        Account Login(string username, string password);
     }
 }
