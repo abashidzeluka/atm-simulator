@@ -44,48 +44,40 @@ namespace UI.Menus
 
         private void Register()
         {
-            Console.Write("Enter username: ");
-            string username = Console.ReadLine().Trim();
+            string username;
 
-            if (string.IsNullOrWhiteSpace(username))
-            {
-                AnsiConsole.MarkupLine("[red]Username cannot be empty![/]");
-                return;
-            }
-            if (username.Length < 3)
-            {
-                AnsiConsole.MarkupLine("[red]Username must be at least 3 characters![/]");
-                return;
-            }
-            if (!username.All(char.IsLetter))
-            {
-                AnsiConsole.MarkupLine("[red]Username must contain only letters![/]");
-                return;
-            }
+                while (true)
+                {
+                    Console.Write("Enter username: ");
+                    username = Console.ReadLine().Trim();
 
-            Console.Write("Create a password: ");
-            string password = Console.ReadLine();
+                    if (string.IsNullOrWhiteSpace(username))
+                        AnsiConsole.MarkupLine("[red]Username cannot be empty![/]");
+                    else if (username.Length < 3)
+                        AnsiConsole.MarkupLine("[red]Username must be at least 3 characters![/]");
+                    else if (!username.All(char.IsLetter))
+                        AnsiConsole.MarkupLine("[red]Username must contain only letters![/]");
+                    else
+                        break;
+                }
 
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                AnsiConsole.MarkupLine("[red]Password cannot be empty![/]");
-                return;
-            }
-            if (password.Length < 6)
-            {
-                AnsiConsole.MarkupLine("[red]Password must be at least 6 characters![/]");
-                return;
-            }
-            if (!password.Any(char.IsDigit))
-            {
-                AnsiConsole.MarkupLine("[red]Password must contain at least one number![/]");
-                return;
-            }
-            if (!password.Any(char.IsUpper))
-            {
-                AnsiConsole.MarkupLine("[red]Password must have at least one uppercase letter![/]");
-                return;
-            }
+            string password;
+                while(true)
+                {
+                    Console.Write("Create a password: ");
+                    password = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(password))
+                    AnsiConsole.MarkupLine("[red]Password cannot be empty![/]");
+                else if (password.Length < 6)
+                    AnsiConsole.MarkupLine("[red]Password must be at least 6 characters![/]");
+                else if (!password.Any(char.IsDigit))
+                    AnsiConsole.MarkupLine("[red]Password must contain at least one number![/]");
+                else if (!password.Any(char.IsUpper))
+                    AnsiConsole.MarkupLine("[red]Password must have at least one uppercase letter![/]");
+                else
+                    break;
+                 }
 
             var account = _authService.Register(username, password);
             if (account != null)
