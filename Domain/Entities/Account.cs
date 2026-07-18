@@ -11,18 +11,12 @@ namespace Domain.Entities
         public string UserName { get; set; }
         public string Password { get; set; }
         public decimal Balance { get; set; }
-        public string Pin { get; set; }
-        
-
-
-
 
         public Account(string userName, string password, decimal balance)
         {
             Id = Guid.NewGuid().ToString();
             UserName = userName;
             Balance = balance;
-            Pin = PinGenerator.Generate();
             Password = password;
         }
     }
