@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Domain.Enums
 {
-    internal enum Role
+    public enum Role
     {
         Admin,
         Client

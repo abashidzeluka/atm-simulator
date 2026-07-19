@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "Id": 1,
+    "UserName": "ddd",
+    "Password": "917245FA77C3F48D398863C3C5422130",
+    "Balance": 0.0,
+    "Role": "Client"
+  },
+  {
+    "Id": 2,
+    "UserName": "Luka",
+    "Password": "6A57B69D557C5DA3CC32CF183EC5C148",
+    "Balance": 0.0,
+    "Role": "Client"
+  }
+]

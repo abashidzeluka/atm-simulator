@@ -9,5 +9,6 @@ namespace Repository.Interfaces
             void Add(Account account);               
             bool Exists(string username);            
             void Update(Account account);
+            int Count();
     }
 }

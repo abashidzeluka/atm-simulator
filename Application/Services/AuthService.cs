@@ -2,6 +2,7 @@
 using Domain.Entities;
 using Domain.Helpers;
 using Repository.Interfaces;
+using Domain.Enums;
 using System;
 
 namespace Application.Services
@@ -19,7 +20,8 @@ namespace Application.Services
             if (_repository.Exists(username))
                 return null;
 
-            Account account = new Account(username, Hasher.Hash(password), 0);
+            int newId = _repository.Count() + 1;
+            Account account = new Account(username, Hasher.Hash(password), 0, Role.Client, newId);
 
             _repository.Add(account);
             return account;
@@ -38,6 +40,11 @@ namespace Application.Services
                 return null;
             }
             return account;
+        }
+
+        public bool Exists(string username)
+        {
+            return _repository.Exists(username);
         }
     }
 }

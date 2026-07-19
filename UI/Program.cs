@@ -1,4 +1,5 @@
-﻿using Application.Services;
+﻿using Application.Interfaces;
+using Application.Services;
 using Domain.Entities;
 using Repository.Implementations;
 using UI.Menus;
@@ -11,7 +12,8 @@ namespace UI
         {
             var repository = new AccountRepository();
             var authService = new AuthService(repository);
-            var authMenu = new ClientMenu(authService);
+            var transactionService = new TransactionService(repository);
+            var authMenu = new ClientMenu(authService, transactionService);
 
             authMenu.Show();
 

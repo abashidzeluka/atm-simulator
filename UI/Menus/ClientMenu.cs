@@ -1,6 +1,8 @@
-﻿using System;
-using Application.Interfaces;
+﻿using Application.Interfaces;
+using Domain.Entities;
 using Spectre.Console;
+using System;
+using System.Security.Principal;
 
 
 
@@ -9,10 +11,13 @@ namespace UI.Menus
     public class ClientMenu
     {
         private IAuthService _authService;
+        private Account _account;
+        private ITransactionService _transactionService;
 
-        public ClientMenu(IAuthService authService)
+        public ClientMenu(IAuthService authService, ITransactionService transactionService)
         {
             _authService = authService;
+            _transactionService = transactionService;
         }
 
         public void Show()
@@ -91,8 +96,23 @@ namespace UI.Menus
 
         private void Login()
         {
-            Console.Write("Enter username: ");
-            string username = Console.ReadLine().Trim();
+            string username;
+            while (true)
+            {
+                Console.Write("Enter username: ");
+                username = Console.ReadLine().Trim();
+
+                if (string.IsNullOrWhiteSpace(username))
+                    AnsiConsole.MarkupLine("[red]Username cannot be empty![/]");
+                else if (username.Length < 3)
+                    AnsiConsole.MarkupLine("[red]Username must be at least 3 characters![/]");
+                else if (!username.All(char.IsLetter))
+                    AnsiConsole.MarkupLine("[red]Username must contain only letters![/]");
+                else if (!_authService.Exists(username))
+                    AnsiConsole.MarkupLine("[red]Username not found! Try again.[/]");
+                else
+                    break;
+            }
 
             int attempts = 0;
             while (attempts < 3)
@@ -100,20 +120,86 @@ namespace UI.Menus
                 Console.Write("Enter a password: ");
                 string password = Console.ReadLine();
 
-             var account = _authService.Login(username, password);
+                var account = _authService.Login(username, password);
 
-            if (account != null)
+                if (account != null)
+                {
+                    _account = account;
+                    AnsiConsole.MarkupLine("[green]Welcome " + account.UserName + "![/]");
+                    ShowAtmMenu();
+                    return;
+                }
+                else
+                {
+                    attempts++;
+                    AnsiConsole.MarkupLine($"[red]Login failed! {3 - attempts} attempts left.[/]");
+                }
+            }
+            AnsiConsole.MarkupLine("[red]Account locked! Too many failed attempts.[/]");
+        }
+
+        private void ShowAtmMenu()
+        {
+            while (true)
             {
-                AnsiConsole.MarkupLine("[green]Welcome " + account.UserName + "![/]");
-                return;
+                var choice = AnsiConsole.Prompt(
+                    new SelectionPrompt<string>()
+                        .Title($"Hello [green]{_account.UserName}[/]!")
+                        .AddChoices("Check Balance", "Deposit", "Withdraw", "Logout"));
+
+                switch (choice)
+                {
+                    case "Check Balance":
+                        CheckBalance();
+                        break;
+                    case "Deposit":
+                        Deposit();
+                        break;
+                    case "Withdraw":
+                        Withdraw();
+                        break;
+                    case "Logout":
+                        _account = null;
+                        return;
+                }
             }
-            else
+        }
+
+        private void CheckBalance()
+        {
+            decimal balance = _transactionService.GetBalance(_account.UserName);
+            AnsiConsole.MarkupLine($"[green]Your balance is: {balance} GEL[/]");
+        }
+
+        private void Deposit()
+        {
+            Console.Write("Enter amount to deposit: ");
+            decimal amount = decimal.Parse(Console.ReadLine());
+
+            _transactionService.Deposit(_account.UserName, amount);
+            AnsiConsole.MarkupLine($"[green]Successfully deposited {amount} GEL![/]");
+        }
+
+        private void Withdraw()
+        {           
+                
+
+            while(true)
             {
-                attempts++;
-                AnsiConsole.MarkupLine($"[red]Login failed! {3 - attempts} attempts left.[/]");
+                Console.Write("Enter amount to withdraw: ");
+                decimal amount = decimal.Parse(Console.ReadLine());
+                
+                if (_account.Balance < amount)
+                    AnsiConsole.MarkupLine($"[red]Not enough amount! try again[/]");
+
+                else
+                {
+                    _transactionService.Withdraw(_account.UserName, amount);
+                    AnsiConsole.MarkupLine($"[green]Successfully withdrawn {amount} GEL![/]");
+                    break;
+                }
             }
-            }
-                AnsiConsole.MarkupLine("[red]Account locked! Too many failed attempts.[/]");
+            
         }
     }
 }

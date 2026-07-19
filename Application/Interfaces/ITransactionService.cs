@@ -4,7 +4,10 @@ using System.Text;
 
 namespace Application.Interfaces
 {
-    internal interface ITransactionService
+    public interface ITransactionService
     {
+        decimal GetBalance(string username);
+        void Deposit(string username, decimal amount);
+        void Withdraw(string username, decimal amount);
     }
 }

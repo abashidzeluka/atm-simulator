@@ -1,5 +1,6 @@
-﻿using Newtonsoft.Json;
-using Domain.Entities;
+﻿using Domain.Entities;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Repository.Interfaces;
 
 namespace Repository.Implementations
@@ -17,12 +18,18 @@ namespace Repository.Implementations
             if (string.IsNullOrWhiteSpace(json))
                 return new List<Account>();
 
-            return JsonConvert.DeserializeObject<List<Account>>(json);
+            return JsonConvert.DeserializeObject<List<Account>>(json, new JsonSerializerSettings
+            {
+                Converters = { new StringEnumConverter() }
+            });
         }
 
         private void SaveAll(List<Account> accounts)
         {
-            string json = JsonConvert.SerializeObject(accounts, Formatting.Indented);
+            string json = JsonConvert.SerializeObject(accounts, Formatting.Indented, new JsonSerializerSettings
+            {
+                Converters = { new StringEnumConverter() }
+            });
             File.WriteAllText(_filePath, json);
         }
 
@@ -71,6 +78,11 @@ namespace Repository.Implementations
                     return;
                 }
             }
+        }
+
+        public int Count()
+        {
+            return LoadAll().Count;
         }
     }
 }
