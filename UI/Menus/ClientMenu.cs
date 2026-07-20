@@ -3,6 +3,7 @@ using Domain.Entities;
 using Domain.Enums;
 using Spectre.Console;
 using System;
+using System.ComponentModel;
 using System.Linq;
 
 namespace UI.Menus
@@ -54,8 +55,13 @@ namespace UI.Menus
 
             while (true)
             {
-                Console.Write("Enter username: ");
+                Console.Write("Enter username (or type '0' to go back): ");
                 username = Console.ReadLine().Trim();
+
+                if (username == "0")
+                {
+                    return;
+                }
 
                 if (string.IsNullOrWhiteSpace(username))
                     AnsiConsole.MarkupLine("[red]Username cannot be empty![/]");
@@ -100,8 +106,14 @@ namespace UI.Menus
             string username;
             while (true)
             {
-                Console.Write("Enter username: ");
+
+                Console.Write("Enter username (or type '0' to go back): ");
                 username = Console.ReadLine().Trim();
+
+                if (username == "0")
+                {
+                    return;
+                }
 
                 if (string.IsNullOrWhiteSpace(username))
                     AnsiConsole.MarkupLine("[red]Username cannot be empty![/]");
@@ -120,6 +132,7 @@ namespace UI.Menus
             {
                 Console.Write("Enter a password: ");
                 string password = Console.ReadLine();
+
 
                 var account = _authService.Login(username, password);
 
@@ -146,7 +159,7 @@ namespace UI.Menus
                 var choice = AnsiConsole.Prompt(
                     new SelectionPrompt<string>()
                         .Title($" [green]Welcome, {_account.UserName}[/]!")
-                        .AddChoices("Check Balance", "Deposit", "Withdraw", "Loan Options", "Logout"));
+                        .AddChoices("Check Balance", "Deposit", "Withdraw", "Loan Options", "Logout", "Back"));
 
                 switch (choice)
                 {
@@ -162,6 +175,8 @@ namespace UI.Menus
                     case "Loan Options":
                         LoanMenu();
                         break;
+                    case "Back":
+                        return;
                     case "Logout":
                         _account = null;
                         return;
