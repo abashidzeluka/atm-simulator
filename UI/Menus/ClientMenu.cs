@@ -1,10 +1,9 @@
 ﻿using Application.Interfaces;
 using Domain.Entities;
+using Domain.Enums;
 using Spectre.Console;
 using System;
-using System.Security.Principal;
-
-
+using System.Linq;
 
 namespace UI.Menus
 {
@@ -13,11 +12,13 @@ namespace UI.Menus
         private IAuthService _authService;
         private Account _account;
         private ITransactionService _transactionService;
+        private ILoanService _loanService;
 
-        public ClientMenu(IAuthService authService, ITransactionService transactionService)
+        public ClientMenu(IAuthService authService, ITransactionService transactionService, ILoanService loanService)
         {
             _authService = authService;
             _transactionService = transactionService;
+            _loanService = loanService;
         }
 
         public void Show()
@@ -28,7 +29,7 @@ namespace UI.Menus
             {
                 AnsiConsole.WriteLine();
                 var choice = AnsiConsole.Prompt(
-                    new SelectionPrompt<string>()                  
+                    new SelectionPrompt<string>()
                         .Title("Welcome to ATM")
                         .AddChoices("Register", "Login", "Exit"));
 
@@ -51,26 +52,26 @@ namespace UI.Menus
         {
             string username;
 
-                while (true)
-                {
-                    Console.Write("Enter username: ");
-                    username = Console.ReadLine().Trim();
+            while (true)
+            {
+                Console.Write("Enter username: ");
+                username = Console.ReadLine().Trim();
 
-                    if (string.IsNullOrWhiteSpace(username))
-                        AnsiConsole.MarkupLine("[red]Username cannot be empty![/]");
-                    else if (username.Length < 3)
-                        AnsiConsole.MarkupLine("[red]Username must be at least 3 characters![/]");
-                    else if (!username.All(char.IsLetter))
-                        AnsiConsole.MarkupLine("[red]Username must contain only letters![/]");
-                    else
-                        break;
-                }
+                if (string.IsNullOrWhiteSpace(username))
+                    AnsiConsole.MarkupLine("[red]Username cannot be empty![/]");
+                else if (username.Length < 3)
+                    AnsiConsole.MarkupLine("[red]Username must be at least 3 characters![/]");
+                else if (!username.All(char.IsLetter))
+                    AnsiConsole.MarkupLine("[red]Username must contain only letters![/]");
+                else
+                    break;
+            }
 
             string password;
-                while(true)
-                {
-                    Console.Write("Create a password: ");
-                    password = Console.ReadLine();
+            while (true)
+            {
+                Console.Write("Create a password: ");
+                password = Console.ReadLine();
 
                 if (string.IsNullOrWhiteSpace(password))
                     AnsiConsole.MarkupLine("[red]Password cannot be empty![/]");
@@ -82,16 +83,16 @@ namespace UI.Menus
                     AnsiConsole.MarkupLine("[red]Password must have at least one uppercase letter![/]");
                 else
                     break;
-                 }
+            }
 
             var account = _authService.Register(username, password);
             if (account != null)
             {
+                Console.WriteLine();
                 AnsiConsole.MarkupLine("[green]Account created![/]");
             }
             else
                 AnsiConsole.MarkupLine("[red]Username already taken![/]");
-
         }
 
         private void Login()
@@ -125,8 +126,7 @@ namespace UI.Menus
                 if (account != null)
                 {
                     _account = account;
-                    AnsiConsole.MarkupLine("[green]Welcome " + account.UserName + "![/]");
-                    ShowAtmMenu();
+                    ShowClientMenu();
                     return;
                 }
                 else
@@ -138,14 +138,15 @@ namespace UI.Menus
             AnsiConsole.MarkupLine("[red]Account locked! Too many failed attempts.[/]");
         }
 
-        private void ShowAtmMenu()
+        private void ShowClientMenu()
         {
             while (true)
             {
+                Console.WriteLine();
                 var choice = AnsiConsole.Prompt(
                     new SelectionPrompt<string>()
-                        .Title($"Hello [green]{_account.UserName}[/]!")
-                        .AddChoices("Check Balance", "Deposit", "Withdraw", "Logout"));
+                        .Title($" [green]Welcome, {_account.UserName}[/]!")
+                        .AddChoices("Check Balance", "Deposit", "Withdraw", "Loan Options", "Logout"));
 
                 switch (choice)
                 {
@@ -158,6 +159,9 @@ namespace UI.Menus
                     case "Withdraw":
                         Withdraw();
                         break;
+                    case "Loan Options":
+                        LoanMenu();
+                        break;
                     case "Logout":
                         _account = null;
                         return;
@@ -168,38 +172,134 @@ namespace UI.Menus
         private void CheckBalance()
         {
             decimal balance = _transactionService.GetBalance(_account.UserName);
+            Console.WriteLine();
             AnsiConsole.MarkupLine($"[green]Your balance is: {balance} GEL[/]");
         }
 
         private void Deposit()
         {
+            Console.WriteLine();
             Console.Write("Enter amount to deposit: ");
-            decimal amount = decimal.Parse(Console.ReadLine());
-
-            _transactionService.Deposit(_account.UserName, amount);
-            AnsiConsole.MarkupLine($"[green]Successfully deposited {amount} GEL![/]");
+            if (decimal.TryParse(Console.ReadLine(), out decimal amount) && amount > 0)
+            {
+                _transactionService.Deposit(_account.UserName, amount);
+                Console.WriteLine();
+                AnsiConsole.MarkupLine($"[green]Successfully deposited {amount} GEL![/]");
+            }
+            else
+            {
+                AnsiConsole.MarkupLine("[red]Invalid amount![/]");
+            }
         }
 
         private void Withdraw()
-        {           
-                
-
-            while(true)
+        {
+            while (true)
             {
+                Console.WriteLine();
                 Console.Write("Enter amount to withdraw: ");
-                decimal amount = decimal.Parse(Console.ReadLine());
-                
-                if (_account.Balance < amount)
-                    AnsiConsole.MarkupLine($"[red]Not enough amount! try again[/]");
+                if (!decimal.TryParse(Console.ReadLine(), out decimal amount) || amount <= 0)
+                {
+                    AnsiConsole.MarkupLine("[red]Please enter a valid positive number![/]");
+                    continue;
+                }
 
+                decimal currentBalance = _transactionService.GetBalance(_account.UserName);
+
+                if (currentBalance < amount)
+                {
+                    Console.WriteLine();
+                    AnsiConsole.MarkupLine($"[red]Not enough funds! Your balance is {currentBalance} GEL[/]");
+                }
                 else
                 {
                     _transactionService.Withdraw(_account.UserName, amount);
+                    Console.WriteLine();
                     AnsiConsole.MarkupLine($"[green]Successfully withdrawn {amount} GEL![/]");
                     break;
                 }
             }
-            // check!
+        }
+
+        private void LoanMenu()
+        {
+            while (true)
+            {
+                Console.WriteLine();
+                var choice = AnsiConsole.Prompt(
+                    new SelectionPrompt<string>()
+                        .Title("[yellow]Loan Operations[/]")
+                        .AddChoices("Request Loan", "My Loans", "Back"));
+
+                switch (choice)
+                {
+                    case "Request Loan":
+                        RequestLoan();
+                        break;
+                    case "My Loans":
+                        ShowMyLoans();
+                        break;
+                    case "Back":
+                        return;
+                }
+            }
+        }
+
+        private void RequestLoan()
+        {
+            Console.WriteLine();
+            Console.Write("Enter desired loan amount: ");
+            if (!decimal.TryParse(Console.ReadLine(), out decimal amount) || amount <= 0)
+            {
+                AnsiConsole.MarkupLine("[red]Invalid loan amount![/]");
+                return;
+            }
+
+            try
+            {
+                // Calls LoanRequest from your LoanService
+                _loanService.LoanRequest(_account.Id, amount);
+                AnsiConsole.MarkupLine($"[green]Loan request for {amount} GEL submitted successfully! Status: Pending Approval.[/]");
+            }
+            catch (Exception ex)
+            {
+                AnsiConsole.MarkupLine($"[red]Error requesting loan: {ex.Message}[/]");
+            }
+        }
+
+        private void ShowMyLoans()
+        {
+            Console.WriteLine();
+            var loans = _loanService.GetUserLoans(_account.Id);
+
+            if (loans == null || !loans.Any())
+            {
+                AnsiConsole.MarkupLine("[yellow]You have no active or previous loans.[/]");
+                return;
+            }
+
+            var table = new Table();
+            table.AddColumn("Loan ID");
+            table.AddColumn("Amount (GEL)");
+            table.AddColumn("Status");
+
+            foreach (var loan in loans)
+            {
+                string statusColor = loan.Status switch
+                {
+                    LoanStatus.Approved => "green",
+                    LoanStatus.Declined => "red",
+                    _ => "yellow"
+                };
+
+                table.AddRow(
+                    loan.LoanId.ToString(),
+                    loan.Amount.ToString("0.00"),
+                    $"[{statusColor}]{loan.Status}[/]"
+                );
+            }
+
+            AnsiConsole.Write(table);
         }
     }
 }

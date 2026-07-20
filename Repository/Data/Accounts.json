@@ -1,10 +1,10 @@
 [
   {
     "Id": 1,
-    "UserName": "ddd",
-    "Password": "917245FA77C3F48D398863C3C5422130",
+    "UserName": "Admin",
+    "Password": "2E33A9B0B06AA0A01EDE70995674EE23",
     "Balance": 0.0,
-    "Role": "Client"
+    "Role": "Admin"
   },
   {
     "Id": 2,

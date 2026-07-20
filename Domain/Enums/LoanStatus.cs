@@ -4,9 +4,10 @@ using System.Text;
 
 namespace Domain.Enums
 {
-    internal enum TransactionType
+    public enum LoanStatus
     {
-        Withdraw,
-        Deposit
+        Pending,
+        Approved,
+        Declined
     }
 }
