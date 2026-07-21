@@ -66,5 +66,10 @@ namespace Application.Services
             loan.Status = LoanStatus.Declined;
             _loanRepository.Update(loan);
         }
+
+        public List<Loan> GetPendingLoans()
+        {
+            return _loanRepository.GetPendingLoans();
+        }
     }
 }

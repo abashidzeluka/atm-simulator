@@ -12,6 +12,7 @@ namespace Application.Interfaces
 
         void LoanDecline(int loanId);
 
+        List<Loan> GetPendingLoans();
         List<Loan> GetAllLoans();
 
         List<Loan> GetUserLoans(int userId);

@@ -12,5 +12,6 @@ namespace Repository.Interfaces
         Loan GetById(int loanId);
         List<Loan> GetAll();
         List<Loan> GetByUserId(int userId);
+        List<Loan> GetPendingLoans();
     }
 }

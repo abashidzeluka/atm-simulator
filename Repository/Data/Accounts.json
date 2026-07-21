@@ -5,5 +5,12 @@
     "Password": "2E33A9B0B06AA0A01EDE70995674EE23",
     "Balance": 0.0,
     "Role": "Admin"
+  },
+  {
+    "Id": 2,
+    "UserName": "Luka",
+    "Password": "6A57B69D557C5DA3CC32CF183EC5C148",
+    "Balance": 0.0,
+    "Role": "Client"
   }
 ]

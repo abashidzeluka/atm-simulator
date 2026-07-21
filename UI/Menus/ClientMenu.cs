@@ -15,11 +15,14 @@ namespace UI.Menus
         private ITransactionService _transactionService;
         private ILoanService _loanService;
 
-        public ClientMenu(IAuthService authService, ITransactionService transactionService, ILoanService loanService)
+        private readonly AdminMenu _adminMenu;
+
+        public ClientMenu(IAuthService authService, ITransactionService transactionService, ILoanService loanService, AdminMenu adminMenu)
         {
             _authService = authService;
             _transactionService = transactionService;
             _loanService = loanService;
+            _adminMenu = adminMenu;
         }
 
         public void Show()
@@ -139,7 +142,15 @@ namespace UI.Menus
                 if (account != null)
                 {
                     _account = account;
-                    ShowClientMenu();
+                    if (_account.Role == Role.Admin)
+                    {
+                        _adminMenu.Show();
+                    }
+                    else
+                    {
+                        ShowClientMenu();
+                    }
+                    _account = null;
                     return;
                 }
                 else
@@ -272,7 +283,6 @@ namespace UI.Menus
 
             try
             {
-                // Calls LoanRequest from your LoanService
                 _loanService.LoanRequest(_account.Id, amount);
                 AnsiConsole.MarkupLine($"[green]Loan request for {amount} GEL submitted successfully! Status: Pending Approval.[/]");
             }

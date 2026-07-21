@@ -1,10 +1,12 @@
 ﻿using Domain.Entities;
+using Domain.Enums;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Repository.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Repository.Implementations
 {
@@ -103,6 +105,13 @@ namespace Repository.Implementations
                     return;
                 }
             }
+        }
+
+        public List<Loan> GetPendingLoans()
+        {
+            return LoadAll()
+                .Where(l => l.Status == LoanStatus.Pending)
+                .ToList();
         }
     }
 }

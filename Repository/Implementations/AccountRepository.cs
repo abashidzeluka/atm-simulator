@@ -11,26 +11,41 @@ namespace Repository.Implementations
 
         private List<Account> LoadAll()
         {
-            if (!File.Exists(_filePath))
-                return new List<Account>();
-
-            string json = File.ReadAllText(_filePath);
-            if (string.IsNullOrWhiteSpace(json))
-                return new List<Account>();
-
-            return JsonConvert.DeserializeObject<List<Account>>(json, new JsonSerializerSettings
+            try
             {
-                Converters = { new StringEnumConverter() }
-            });
+                if (!File.Exists(_filePath))
+                    return new List<Account>();
+
+                string json = File.ReadAllText(_filePath);
+                if (string.IsNullOrWhiteSpace(json))
+                    return new List<Account>();
+
+                return JsonConvert.DeserializeObject<List<Account>>(json, new JsonSerializerSettings
+                {
+                    Converters = { new StringEnumConverter() }
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading accounts: {ex.Message}");
+                return new List<Account>();
+            }
         }
 
         private void SaveAll(List<Account> accounts)
         {
-            string json = JsonConvert.SerializeObject(accounts, Formatting.Indented, new JsonSerializerSettings
+            try
             {
-                Converters = { new StringEnumConverter() }
-            });
-            File.WriteAllText(_filePath, json);
+                string json = JsonConvert.SerializeObject(accounts, Formatting.Indented, new JsonSerializerSettings
+                {
+                    Converters = { new StringEnumConverter() }
+                });
+                File.WriteAllText(_filePath, json);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving accounts: {ex.Message}");
+            }
         }
 
         public void Add(Account account)

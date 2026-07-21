@@ -14,8 +14,9 @@ namespace UI
             var loanRepository = new LoanRepository();
             var authService = new AuthService(repository);
             var loanService = new LoanService(loanRepository);
+            var adminMenu = new AdminMenu(loanService);
             var transactionService = new TransactionService(repository);
-            var authMenu = new ClientMenu(authService, transactionService, loanService);
+            var authMenu = new ClientMenu(authService, transactionService, loanService, adminMenu);
 
             authMenu.Show();
 
