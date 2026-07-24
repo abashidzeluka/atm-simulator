@@ -2,8 +2,8 @@
   {
     "LoanId": 1,
     "UserId": 2,
-    "Amount": 5000.0,
+    "Amount": 50000.0,
     "Status": "Pending",
-    "RequestDate": "2026-07-21T21:17:55.9787099+04:00"
+    "RequestDate": "2026-07-21T23:29:46.2466183+04:00"
   }
 ]
