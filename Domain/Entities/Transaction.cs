@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Domain.Entities
+﻿namespace Domain.Entities
 {
-    internal class Transaction
+    public class Transaction
     {
+        public string Username { get; set; }
+        public string Type { get; set; }
+        public decimal Amount { get; set; }
+        public DateTime Timestamp { get; set; }
     }
 }

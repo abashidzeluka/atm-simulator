@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Domain.Entities;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Repository.Interfaces
 {
-    internal interface ITransactionRepository
+    public interface ITransactionRepository
     {
+        void Add(Transaction transaction);
+        List<Transaction> GetByUsername(string username);
     }
 }

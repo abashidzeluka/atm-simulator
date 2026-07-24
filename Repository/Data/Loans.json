@@ -1,9 +1,1 @@
-[
-  {
-    "LoanId": 1,
-    "UserId": 2,
-    "Amount": 50000.0,
-    "Status": "Pending",
-    "RequestDate": "2026-07-21T23:29:46.2466183+04:00"
-  }
-]
+[]

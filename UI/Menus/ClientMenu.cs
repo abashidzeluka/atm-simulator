@@ -3,7 +3,6 @@ using Domain.Entities;
 using Domain.Enums;
 using Spectre.Console;
 using System;
-using System.ComponentModel;
 using System.Linq;
 
 namespace UI.Menus
@@ -11,19 +10,18 @@ namespace UI.Menus
     public class ClientMenu
     {
         private IAuthService _authService;
-        private Account _account;
+        private User _account;
         private ITransactionService _transactionService;
         private ILoanService _loanService;
 
-        private readonly AdminMenu _adminMenu;
-
-        public ClientMenu(IAuthService authService, ITransactionService transactionService, ILoanService loanService, AdminMenu adminMenu)
+        public ClientMenu(IAuthService authService, ITransactionService transactionService, ILoanService loanService)
         {
             _authService = authService;
             _transactionService = transactionService;
             _loanService = loanService;
-            _adminMenu = adminMenu;
         }
+
+
 
         public void Show()
         {
@@ -144,7 +142,8 @@ namespace UI.Menus
                     _account = account;
                     if (_account.Role == Role.Admin)
                     {
-                        _adminMenu.Show();
+                        var adminMenu = new AdminMenu(_loanService);
+                        adminMenu.Show();
                     }
                     else
                     {
@@ -170,7 +169,7 @@ namespace UI.Menus
                 var choice = AnsiConsole.Prompt(
                     new SelectionPrompt<string>()
                         .Title($" [green]Welcome, {_account.UserName}[/]!")
-                        .AddChoices("Check Balance", "Deposit", "Withdraw", "Loan Options", "Logout", "Back"));
+                        .AddChoices("Check Balance", "Deposit", "Withdraw", "Loan Options", "Logout"));
 
                 switch (choice)
                 {
@@ -186,8 +185,6 @@ namespace UI.Menus
                     case "Loan Options":
                         LoanMenu();
                         break;
-                    case "Back":
-                        return;
                     case "Logout":
                         _account = null;
                         return;
@@ -206,15 +203,21 @@ namespace UI.Menus
         {
             Console.WriteLine();
             Console.Write("Enter amount to deposit: ");
-            if (decimal.TryParse(Console.ReadLine(), out decimal amount) && amount > 0)
+            if (!decimal.TryParse(Console.ReadLine(), out decimal amount) || amount <= 0)
+            {
+                AnsiConsole.MarkupLine("[red]Invalid amount![/]");
+                return;
+            }
+
+            try
             {
                 _transactionService.Deposit(_account.UserName, amount);
                 Console.WriteLine();
                 AnsiConsole.MarkupLine($"[green]Successfully deposited {amount} GEL![/]");
             }
-            else
+            catch (Exception ex)
             {
-                AnsiConsole.MarkupLine("[red]Invalid amount![/]");
+                AnsiConsole.MarkupLine($"[red]{ex.Message}[/]");
             }
         }
 
@@ -239,10 +242,18 @@ namespace UI.Menus
                 }
                 else
                 {
-                    _transactionService.Withdraw(_account.UserName, amount);
-                    Console.WriteLine();
-                    AnsiConsole.MarkupLine($"[green]Successfully withdrawn {amount} GEL![/]");
-                    break;
+                    try
+                    {
+                        _transactionService.Withdraw(_account.UserName, amount);
+                        Console.WriteLine();
+                        AnsiConsole.MarkupLine($"[green]Successfully withdrawn {amount} GEL![/]");
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        AnsiConsole.MarkupLine($"[red]{ex.Message}[/]");
+                        break;
+                    }
                 }
             }
         }

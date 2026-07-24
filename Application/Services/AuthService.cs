@@ -9,36 +9,39 @@ namespace Application.Services
 {
     public class AuthService : IAuthService
     {
-        private IAccountRepository _repository;
+        private IUserRepository _repository;
+        private Logger _logger = new Logger();
 
-        public AuthService(IAccountRepository repository)
+        public AuthService(IUserRepository repository)
         {
             _repository = repository;
         }
-        public Account Register(string username, string password)
+        public User Register(string username, string password)
         {
             if (_repository.Exists(username))
                 return null;
 
             int newId = _repository.Count() + 1;
-            Account account = new Account(username, Hasher.Hash(password), 0, Role.Client, newId);
+            Client client = new Client(newId, username, Hasher.Hash(password), 0);
 
-            _repository.Add(account);
-            return account;
+            _repository.Add(client);
+            _logger.Log("Register", username);
+            return client;
         }
 
-        public Account Login(string username, string password)
+        public User Login(string username, string password)
         {
             if (!_repository.Exists(username))
             {
                 return null;
             }
-            Account account = _repository.GetByUsername(username);
+            User account = _repository.GetByUsername(username);
 
             if (account.Password != Hasher.Hash(password))
             {
                 return null;
             }
+            _logger.Log("Login", username);
             return account;
         }
 

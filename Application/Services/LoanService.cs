@@ -11,9 +11,12 @@ namespace Application.Services
     {
         private readonly ILoanRepository _loanRepository;
 
-        public LoanService(ILoanRepository loanRepository)
+        private readonly IUserRepository _userRepository;
+
+        public LoanService(ILoanRepository loanRepository, IUserRepository userRepository)
         {
             _loanRepository = loanRepository;
+            _userRepository = userRepository;
         }
 
         public void LoanRequest(int userId, decimal amount)
@@ -23,12 +26,7 @@ namespace Application.Services
                 throw new ArgumentException("Loan amount must be greater than zero.");
             }
 
-            var loan = new Loan(userId, amount)
-            {
-                UserId = userId,
-                Amount = amount,
-                Status = LoanStatus.Pending
-            };
+            var loan = new Loan(userId, amount);
 
             _loanRepository.Add(loan);
         }
@@ -53,6 +51,14 @@ namespace Application.Services
 
             loan.Status = LoanStatus.Approved;
             _loanRepository.Update(loan);
+
+            var user = _userRepository.GetById(loan.UserId);
+            Client client = user as Client;
+            if (client != null)
+            {
+                client.Balance += loan.Amount;
+                _userRepository.Update(client);
+            }
         }
 
         public void LoanDecline(int loanId)

@@ -1,11 +1,6 @@
 ﻿using Application.Interfaces;
-using Domain.Entities;
-using Domain.Enums;
 using Spectre.Console;
 using System;
-using System.Collections.Generic;
-using System.Security.Principal;
-using System.Text;
 
 namespace UI.Menus
 {
@@ -83,12 +78,42 @@ namespace UI.Menus
 
         private void ApproveLoan()
         {
+            Console.Write("Enter Loan ID to approve: ");
+            if (!int.TryParse(Console.ReadLine(), out int loanId))
+            {
+                AnsiConsole.MarkupLine("[red]Invalid Loan ID![/]");
+                return;
+            }
 
+            try
+            {
+                _loanService.LoanApprove(loanId);
+                AnsiConsole.MarkupLine("[green]Loan approved successfully![/]");
+            }
+            catch (Exception ex)
+            {
+                AnsiConsole.MarkupLine($"[red]{ex.Message}[/]");
+            }
         }
 
         private void DeclineLoan()
         {
+            Console.Write("Enter Loan ID to decline: ");
+            if (!int.TryParse(Console.ReadLine(), out int loanId))
+            {
+                AnsiConsole.MarkupLine("[red]Invalid Loan ID![/]");
+                return;
+            }
 
+            try
+            {
+                _loanService.LoanDecline(loanId);
+                AnsiConsole.MarkupLine("[yellow]Loan declined successfully![/]");
+            }
+            catch (Exception ex)
+            {
+                AnsiConsole.MarkupLine($"[red]{ex.Message}[/]");
+            }
         }
     
     }
