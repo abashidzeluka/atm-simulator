@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "$type": "Domain.Entities.Admin, Domain",
+    "Id": 0,
+    "UserName": "Admin",
+    "Password": "E64B78FC3BC91BCBC7DC232BA8EC59E0",
+    "Role": "Admin"
+  }
+]
