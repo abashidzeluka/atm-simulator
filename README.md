@@ -64,4 +64,21 @@ The solution (`atm-simulator.sln`) is divided into 4 decoupled projects followin
 
 1. **Clone the repository:**
 
-       git clone
+       git clone https://github.com/your-username/atm-simulator.git
+       cd atm-simulator
+
+2. **Build the solution:**
+
+       dotnet build
+
+3. **Run the application:**
+
+       dotnet run --project UI
+
+---
+
+## 📌 Future Improvements
+
+* Migrate file-based data persistence to **Entity Framework Core** with **SQL Server / SQLite**.
+* Add unit tests (`xUnit` / `NUnit`) for `AuthService`, `TransactionService`, and `LoanService`.
+* Expose business logic via an **ASP.NET Core Web API**.
