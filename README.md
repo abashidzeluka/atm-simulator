@@ -64,7 +64,7 @@ The solution (`atm-simulator.sln`) is divided into 4 decoupled projects followin
 
 1. **Clone the repository:**
 
-       git clone https://github.com/your-username/atm-simulator.git
+       git clone https://github.com/abashidzeluka/atm-simulator
        cd atm-simulator
 
 2. **Build the solution:**
