@@ -17,7 +17,7 @@ A console-based ATM and banking management system built with **C#** and **.NET**
 * **User Management:** View and manage registered users (`Admin` and `Client` roles).
 * **Loan Administration:** Review client loan applications and approve or decline requests.
 * **System Monitoring:** Access system-wide logs and transaction records.
-
+  
 ---
 
 ## 🏗️ Architecture & Project Structure
