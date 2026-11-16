@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "LoanId": 1,
+    "UserId": 2,
+    "Amount": 10000.0,
+    "Status": "Approved",
+    "RequestDate": "2026-10-24T18:33:24.0716785+04:00"
+  }
+]

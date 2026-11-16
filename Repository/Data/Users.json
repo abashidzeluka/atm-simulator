@@ -5,5 +5,13 @@
     "UserName": "Admin",
     "Password": "E64B78FC3BC91BCBC7DC232BA8EC59E0",
     "Role": "Admin"
+  },
+  {
+    "$type": "Domain.Entities.Client, Domain",
+    "Balance": 10500.0,
+    "Id": 2,
+    "UserName": "Luka",
+    "Password": "41CD8012060774402CAEF35E261BC90C",
+    "Role": "Client"
   }
 ]

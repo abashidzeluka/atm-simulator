@@ -5,4 +5,7 @@
     <Project Path="Repository/Repository.csproj" Id="fbbc1f43-ef21-485c-a37e-bb554387fb4f" />
     <Project Path="UI/UI.csproj" />
   </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
 </Solution>
